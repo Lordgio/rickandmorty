@@ -19,6 +19,10 @@ is saved locally and restored every time the user opens the app.
 format: `https://alkimiirickandmorty.com/details/{characterId}`,
 for example [this one](https://alkimiirickandmorty.com/details/1)
 
+> Important information: Since Android 12 all deeplinks have to be verified to be able to open the app. As 
+> this domain is not verified the link will always be open in the browser. One way to test the link is by using adb:
+> `adb shell am start -W -a android.intent.action.VIEW -d "https://alkimiirickandmorty.com/details/1" dev.jorgeroldan.rickandmorty`
+
 ## Libraries used
 
 | Library            | Description                                                                      |
