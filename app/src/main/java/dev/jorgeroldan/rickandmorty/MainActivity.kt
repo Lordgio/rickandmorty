@@ -1,43 +1,36 @@
 package dev.jorgeroldan.rickandmorty
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import dev.jorgeroldan.rickandmorty.ui.theme.RickAndMortyTheme
+import androidx.activity.enableEdgeToEdge
+import dev.jorgeroldan.rickandmorty.di.AppModule
+import dev.jorgeroldan.rickandmorty.features.app.App
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.GlobalContext
+import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        startDi(this)
         setContent {
-            RickAndMortyTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Greeting("Android")
-                }
-            }
+            App()
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-            text = "Hello $name!",
-            modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    RickAndMortyTheme {
-        Greeting("Android")
+    private fun startDi(context: Context) {
+        // In config changes the activity is recreated, so we need to check first if Koin has been initialised
+        if (GlobalContext.getKoinApplicationOrNull() == null) {
+            startKoin {
+                androidLogger(if (BuildConfig.DEBUG) Level.DEBUG else Level.NONE)
+                androidContext(context)
+                modules(AppModule.getModule())
+            }
+        }
     }
 }

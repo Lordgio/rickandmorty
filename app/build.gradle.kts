@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
+    id(libs.plugins.kotlinParcelize.get().pluginId)
     alias(libs.plugins.apolloGraphql)
 }
 
@@ -28,11 +29,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -43,7 +44,8 @@ android {
     }
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+            excludes.add("DebugProbesKt.bin")
         }
     }
 }
@@ -53,6 +55,7 @@ dependencies {
     // Core Android
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.lifecycle.compose)
     implementation(libs.activity.compose)
 
     // Compose
@@ -61,12 +64,28 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
+    implementation(libs.androidx.navigation.compose)
 
-    // GraphQl
+    // GraphQl & pagination
     implementation(libs.apolloGraphql)
+    implementation(libs.androidx.paging.compose)
+
+    // DI
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
+
+    // UI libraries
+    implementation(libs.coilCompose)
+
+    // Functional programming helpers
+    implementation(libs.arrow.core)
+    implementation(libs.coroutines.android)
 
     // Testing
     testImplementation(libs.junit)
+    testImplementation(libs.mockk.android)
+    testImplementation(libs.mockk.agent)
+    testImplementation(libs.coroutines.test)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(platform(libs.compose.bom))
